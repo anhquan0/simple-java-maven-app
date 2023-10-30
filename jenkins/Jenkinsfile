@@ -1,44 +1,26 @@
 pipeline {
     agent any
+
     stages {
-        stage("Clean Up") {
+        stage('Build') {
             steps {
-                deleteDir();
-            }
-
-        }
-
-        stage("Clone Repo") {
-            steps {
-                sh "git clone https://github.com/anhquan0/simple-java-maven-app.git"
+                sh 'mvn -B -DskipTests clean package'
             }
         }
-
-        stage("Build") {
+        stage('Test') {
             steps {
-                dir("simple-java-maven-app") {
-                    sh "mvn clean install"
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
-
-        stage("Test") {
-            steps {
-                dir("simple-java-maven-app") {
-                    sh "mvn test"
-                }
-            }
-        }
-
         stage('Deliver') {
             steps {
-                dir("simple-java-maven-app") {
-                    sh "ls"
-                    sh './jenkins/scripts/deliver.sh'
-                }
-
+                sh './jenkins/scripts/deliver.sh'
             }
         }
     }
-
 }
