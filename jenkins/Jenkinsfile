@@ -32,14 +32,11 @@ pipeline {
 
         stage('Deliver') {
             steps {
-                sh "ls"
-                sh './jenkins/scripts/deliver.sh'
-            }
-        }
+                dir("simple-java-maven-app") {
+                    sh "ls"
+                    sh './jenkins/scripts/deliver.sh'
+                }
 
-        stage('Complete') {
-            steps {
-                sh 'Ok'
             }
         }
     }
